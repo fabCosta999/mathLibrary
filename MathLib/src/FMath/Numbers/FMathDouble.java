@@ -3,7 +3,9 @@ package FMath.Numbers;
 public class FMathDouble implements FMathNumber<Double> {
         double value;
 
-        public FMathDouble(double v){ value = v; }
+        public FMathDouble(double v){ 
+            value = v; 
+        }
 
         @Override
         public Double add(Double other) {

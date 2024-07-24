@@ -3,7 +3,9 @@ package FMath.Numbers;
 public class FMathInteger implements FMathNumber<Integer> {
         int value;
 
-        public FMathInteger(int v){ value = v; }
+        public FMathInteger(int v){ 
+            value = v; 
+        }
 
         @Override
         public Integer add(Integer other) {

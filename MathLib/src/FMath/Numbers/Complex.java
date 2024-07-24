@@ -10,13 +10,19 @@ public class Complex implements FMathNumber<Complex> {
      * Creates a complex number with the given real part
      * @return a complex number with real part set to r and immaginary part set to 0
      */
-    public Complex (double r) { real=r; immaginary = 0; }
+    public Complex (double r) { 
+        real=r; 
+        immaginary = 0; 
+    }
 
     /**
      * Creates a complex number with the given real and imaginary parts
      * @return a complex number with real part set to r and immaginary part set to i
      */
-    public Complex (double r, double i) { real=r; immaginary = i; }
+    public Complex (double r, double i) { 
+        real=r; 
+        immaginary = i; 
+    }
 
     /**
      * Provides the immaginary number i
