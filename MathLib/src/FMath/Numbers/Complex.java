@@ -1,6 +1,6 @@
 package FMath.Numbers;
 
-public class Complex implements FMathNumber<Complex> {
+public class Complex implements FMathNumber<Complex>, Comparable<Complex> {
 
     public enum angleType {radians, degrees};
 
@@ -131,5 +131,14 @@ public class Complex implements FMathNumber<Complex> {
     @Override
     public String toString(){
         return immaginary > 0 ? real + "+" + immaginary + "i" : real + "" + immaginary + "i";
+    }
+
+    @Override
+    public int compareTo(Complex other){
+        double m1 = magnitude();
+        double m2 = other.magnitude();
+        if (m1 == m2) return 0;
+        if (m1 > m2) return -1;
+        return 1;
     }
 }

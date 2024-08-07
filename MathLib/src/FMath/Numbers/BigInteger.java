@@ -2,7 +2,9 @@ package FMath.Numbers;
 
 import java.util.*;
 
-public class BigInteger implements FMathNumber<BigInteger> {
+import javax.swing.plaf.nimbus.NimbusLookAndFeel;
+
+public class BigInteger implements FMathNumber<BigInteger>, Comparable<BigInteger> {
     private static int intMask = 0xFFFFFFFF;
     private static long longMask = 0xFFFFFFFF00000000L;
     
@@ -51,8 +53,8 @@ public class BigInteger implements FMathNumber<BigInteger> {
     public BigInteger add(BigInteger other) {
         if (isNegative == other.isNegative){
             BigInteger res = new BigInteger(isNegative);
-            
             boolean carry = false;
+            
             if (num.size() == other.num.size()){
                 for (int i=0; i<num.size(); ++i){
                     long num1 = Integer.toUnsignedLong(num.get(i));
@@ -109,8 +111,69 @@ public class BigInteger implements FMathNumber<BigInteger> {
     @Override
     public BigInteger subtract(BigInteger other) {
         if (isNegative == other.isNegative){
-            return new BigInteger();
-            // ...
+            BigInteger res = new BigInteger(isNegative);
+            boolean carry = false;
+
+            int cmp = this.compareTo(other);
+            if (cmp == 0) return new BigInteger();
+            if (cmp < 0){
+                for (int i=0; i<other.num.size(); ++i){
+                    long num1 = Integer.toUnsignedLong(num.get(i));
+                    long num2 = Integer.toUnsignedLong(other.num.get(i));
+                    if (carry) --num1;
+                    if (num1 < num2){
+                        num1 += 1L<<32;
+                        carry = true;
+                    }
+                    res.num.add((int)(num1-num2));
+                }
+                for (int i=other.num.size(); i<num.size(); ++i){
+                    long n = Integer.toUnsignedLong(num.get(i));
+                    if (carry){
+                        if (n == 0) {
+                            carry = true;
+                            n = 0xFFFFFFFFL;
+                        }
+                        else {
+                            carry = false;
+                            --n;
+                        }
+                    }
+                    res.num.add((int)n);
+                }
+                res.isNegative = isNegative;
+                res.depurate();
+                return res;
+            }
+            else{
+                for (int i=0; i<num.size(); ++i){
+                    long num1 = Integer.toUnsignedLong(other.num.get(i));
+                    long num2 = Integer.toUnsignedLong(num.get(i));
+                    if (carry) --num1;
+                    if (num1 < num2){
+                        num1 += 1L<<32;
+                        carry = true;
+                    }
+                    res.num.add((int)(num1-num2));
+                }
+                for (int i=num.size(); i<other.num.size(); ++i){
+                    long n = Integer.toUnsignedLong(other.num.get(i));
+                    if (carry){
+                        if (n == 0) {
+                            carry = true;
+                            n = 0xFFFFFFFFL;
+                        }
+                        else {
+                            carry = false;
+                            --n;
+                        }
+                    }
+                    res.num.add((int)n);
+                }
+                res.isNegative = !isNegative;
+                res.depurate();
+                return res;
+            }
         }
         else{
             if (isNegative) return this.opposite().add(other);
@@ -136,5 +199,32 @@ public class BigInteger implements FMathNumber<BigInteger> {
         for (int i=num.size()-1; i>=0; --i)
             sb.append(String.format("%08X", Integer.toUnsignedLong(num.get(i))));
         return sb.toString();
+    }
+
+    @Override
+    public int compareTo(BigInteger other){
+        if (isNegative == other.isNegative){
+            int size1 = num.size();
+            int size2 = other.num.size();
+            if (size1 > size2) return isNegative ? 1 : -1;
+            if (size2 > size1) return isNegative ? -1 : 1;
+            for (int i=size1-1; i>=0; --i){
+                long num1 = Integer.toUnsignedLong(num.get(i));
+                long num2 = Integer.toUnsignedLong(other.num.get(i));
+                if (num1 > num2) return isNegative ? 1 : -1;
+                if (num2 > num1) return isNegative ? -1: 1;
+            }
+            return 0;
+        }
+        if (!isNegative) return -1;
+        return 1;
+    }
+
+    private void depurate(){
+        int i;
+        for (i=num.size()-1; i>0; --i){
+            if (num.get(i) != 0) break;
+            num.remove(i);
+        }
     }
 }
